@@ -9,10 +9,10 @@ let   yAxis  = []; // vertical   center line
 let s;
 
 const matrix = [
-    [0, 1],
-    [1, 0]
+    [2, 1],
+    [1, 2]
 ];
-const currMatrix = [[0, 0], [0, 0]]; // It will calculated.
+const currMatrix = [[0, 0], [0, 0]]; // It will be calculated.
 
 function setup() {
     createCanvas(width, height);
@@ -39,12 +39,13 @@ function draw() {
 // if (a>=1)a=0;
     
     background(0);
-    translate(width/2, height/2);
-    applyMatrix(1, 0, 0, -1, 0, 0); // 화면 가운데를 원점으로 설정
+    translate(width/2, height/2); // Set the center of the screen as the origin.
+    // Change the coordinate system in the direction of increasing the top right.
+    applyMatrix(1, 0, 0, -1, 0, 0);
 
     // Draw background grid lines.
-    stroke(100);
-    strokeWeight(1);
+    stroke(120); // gray
+    strokeWeight(0.5);
     for (const pos of hLines) line(...pos); // [x1,y1,x2,y2]
     for (const pos of vLines) line(...pos);
 
@@ -113,8 +114,8 @@ function drawArrow(x, y, r) { // for unit vector
     pop();
 }
 
-// p5.js의 applyMatrix()를 쓰면 직선 두께가 변하고, 원이 타원이 된다.
-// 따라서 직접 구현한 다음 함수를 사용한다.
+// Do NOT use applyMatrix() in p5.js.
+// Otherwise, thickness of line changes, and a circle becomes an ellipse.
 
 function transLine(x1, y1, x2, y2) {
     line(...matmul(currMatrix, [x1, y1]),
