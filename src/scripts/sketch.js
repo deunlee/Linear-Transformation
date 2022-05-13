@@ -9,9 +9,12 @@ function createP5(parent, width, height) {
 
         const hLines = []; // horizontal lines [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]
         const vLines = []; // vertical   lines
-        let xAxis = []; // horizontal center line [x1,y1,x2,y2]
-        let yAxis = []; // vertical   center line
-        let s;
+        let xAxis    = []; // horizontal center line [x1,y1,x2,y2]
+        let yAxis    = []; // vertical   center line
+
+        let slider         = null;
+        let sliderValue    = 0;
+        let sliderValueOld = 0;
 
         const matrix = [
             [2, 1],
@@ -20,35 +23,51 @@ function createP5(parent, width, height) {
         const currMatrix = [
             [0, 0],
             [0, 0],
-        ]; // It will be calculated.
+        ]; // It will be calculated automatically.
+
+        let isPlaying = false;
+        p5.start = function start() {
+            sliderValue = 0;
+            isPlaying = true;
+        }
+        p5.stop = function stop() {
+            isPlaying = false;
+        }
+        p5.setMatrix = function setMatrix([a, b, c, d]) {
+            matrix[0][0] = a;
+            matrix[0][1] = b;
+            matrix[1][0] = c;
+            matrix[1][1] = d;
+        }
 
         p5.setup = function setup() {
             const canvas = p5.createCanvas(width, height);
             canvas.parent(parent)
-            // frameRate(60);
+            p5.frameRate(60);
 
             // Calculate coordinates of grid lines.
-            const hBound = width / 2 + step * 5; // horizontal bound
+            const hBound = width  / 2 + step * 5; // horizontal bound
             const vBound = height / 2 + step * 5; // vertical   bound
-            for (let i = -vBound; i <= vBound; i += step)
-                hLines.push([-hBound, i, hBound, i]);
-            for (let i = -hBound; i <= hBound; i += step)
-                vLines.push([i, -vBound, i, vBound]);
+            for (let i = -vBound; i <= vBound; i += step) hLines.push([-hBound, i, hBound, i]);
+            for (let i = -hBound; i <= hBound; i += step) vLines.push([i, -vBound, i, vBound]);
             xAxis = [-hBound, 0, hBound, 0];
             yAxis = [0, -vBound, 0, vBound];
 
-            s = p5.createSlider(0, 1, 0.25, 0.001);
+            // slider = p5.createSlider(0, 1, 0.25, 0.001);
         };
 
-        let old_a = 0;
-        let a = 0;
-
         p5.draw = function draw() {
-            a = s.value();
-            if (a === old_a) return;
-            old_a = a;
-            // a+=deltaTime / 2000;
-            // if (a>=1)a=0;
+            // sliderValue = slider.value();
+            // if (sliderValue === sliderValueOld) return;
+            // sliderValueOld = sliderValue;
+
+            if (!isPlaying) return;
+
+            sliderValue += p5.deltaTime / 2500;
+            if (sliderValue >= 1) {
+                sliderValue = 1;
+                p5.stop();
+            }
 
             p5.background(0);
             p5.translate(width / 2, height / 2); // Set the center of the screen as the origin.
@@ -62,10 +81,10 @@ function createP5(parent, width, height) {
             for (const pos of vLines) p5.line(...pos);
 
             // Apply linear transformation.
-            currMatrix[0][0] = (matrix[0][0] - 1) * a + 1;
-            currMatrix[0][1] = matrix[0][1] * a;
-            currMatrix[1][0] = matrix[1][0] * a;
-            currMatrix[1][1] = (matrix[1][1] - 1) * a + 1;
+            currMatrix[0][0] = (matrix[0][0] - 1) * sliderValue + 1;
+            currMatrix[0][1] = matrix[0][1] * sliderValue;
+            currMatrix[1][0] = matrix[1][0] * sliderValue;
+            currMatrix[1][1] = (matrix[1][1] - 1) * sliderValue + 1;
 
             // Draw grid lines.
             p5.strokeWeight(1.5);
@@ -96,13 +115,6 @@ function createP5(parent, width, height) {
             transCircle(step, step, 12);
         };
 
-        function setMatrix(a, b, c, d) {
-            matrix[0][0] = a;
-            matrix[0][1] = b;
-            matrix[1][0] = c;
-            matrix[1][1] = d;
-        }
-
         function matmul(m1, m2) {
             return [
                 m1[0][0] * m2[0] + m1[0][1] * m2[1],
@@ -131,10 +143,7 @@ function createP5(parent, width, height) {
         // Otherwise, thickness of line changes, and a circle becomes an ellipse.
 
         function transLine(x1, y1, x2, y2) {
-            p5.line(
-                ...matmul(currMatrix, [x1, y1]),
-                ...matmul(currMatrix, [x2, y2])
-            );
+            p5.line(...matmul(currMatrix, [x1, y1]), ...matmul(currMatrix, [x2, y2]));
         }
 
         function transCircle(x, y, r) {

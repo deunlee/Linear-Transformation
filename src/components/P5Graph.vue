@@ -4,21 +4,25 @@
 
 <script>
 import createP5 from '../scripts/sketch.js';
-import { defineComponent, reactive, onMounted } from 'vue';
+import { defineComponent, reactive, onMounted, onBeforeUnmount } from 'vue';
 
 export default defineComponent({
     setup() {
-        // function mouseDown() {
-        //     state.p5.background('red');
-        //     state.p5.ellipse(0, 0, 100, 100);
-        // }
         const state = reactive({
             p5: {},
         });
 
         onMounted(() => {
             state.p5 = createP5('#p5-container', 600, 480);
+            console.log(state.p5);
+            state.p5.start();
         });
+        onBeforeUnmount(() => {
+            console.log('P5Graph: onBeforeUnmount()');
+            state.p5.remove();
+        });
+
+        return { state };
     },
 });
 </script>
