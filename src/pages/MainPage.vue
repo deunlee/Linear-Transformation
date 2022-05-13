@@ -6,16 +6,19 @@
             v-bind="card"
             @click="selectCard(index)"
         ></image-card>
+
+        <p5-graph></p5-graph>
     </q-page>
 </template>
 
 <script lang="ts">
 import ImageCard from 'components/ImageCard.vue';
+import P5Graph from 'components/P5Graph.vue';
 import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({
     name: 'MainPage',
-    components: { ImageCard },
+    components: { ImageCard, P5Graph },
     setup() {
         const cards = reactive([
             {
