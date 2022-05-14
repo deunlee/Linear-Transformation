@@ -3,46 +3,43 @@ import P5 from 'p5';
 
 function createP5(parent, width, height) {
     function sketch(p5) {
-        // const width = 600;
+        // const width  = 600;
         // const height = 480;
-        const step = p5.floor(height / 8); // 좌표 평면 1칸의 픽셀 수
-
+        const step   = p5.floor(height / 8); // number of pixels in one cell
         const hLines = []; // horizontal lines [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]
         const vLines = []; // vertical   lines
         let xAxis    = []; // horizontal center line [x1,y1,x2,y2]
         let yAxis    = []; // vertical   center line
 
-        let slider         = null;
-        let sliderValue    = 0;
-        let sliderValueOld = 0;
-
         const matrix = [
             [2, 1],
             [1, 2],
-        ];
+        ]; // setMatrix()
         const currMatrix = [
             [0, 0],
             [0, 0],
         ]; // It will be calculated automatically.
 
-        let isPlaying = false;
-        p5.start = function start() {
-            sliderValue = 0;
-            isPlaying = true;
-        }
-        p5.stop = function stop() {
-            isPlaying = false;
-        }
-        p5.setMatrix = function setMatrix([a, b, c, d]) {
+        let slider         = null;
+        let sliderValue    = 0;
+        let sliderValueOld = 0;
+        let speed          = 0.005;
+        let isPlaying      = false;
+
+        p5.start     = function ()      { sliderValue = 0; isPlaying = true; }
+        p5.stop      = function ()      { isPlaying = false; }
+        p5.getSpeed  = function ()      { return speed;      }
+        p5.setSpeed  = function (value) { speed = value;     }
+        p5.setMatrix = function ([a, b, c, d]) {
             matrix[0][0] = a;
             matrix[0][1] = b;
             matrix[1][0] = c;
             matrix[1][1] = d;
         }
 
-        p5.setup = function setup() {
+        p5.setup = function () {
             const canvas = p5.createCanvas(width, height);
-            canvas.parent(parent)
+            canvas.parent(parent);
             p5.frameRate(60);
 
             // Calculate coordinates of grid lines.
@@ -56,19 +53,22 @@ function createP5(parent, width, height) {
             // slider = p5.createSlider(0, 1, 0.25, 0.001);
         };
 
-        p5.draw = function draw() {
+        p5.draw = function () {
             // sliderValue = slider.value();
             // if (sliderValue === sliderValueOld) return;
             // sliderValueOld = sliderValue;
 
             if (!isPlaying) return;
-
-            sliderValue += p5.deltaTime / 2500;
+            sliderValue += speed; // p5.deltaTime / 2500;
             if (sliderValue >= 1) {
                 sliderValue = 1;
                 p5.stop();
             }
 
+            p5.drawOnce();
+        }
+
+        p5.drawOnce = function () {
             p5.background(0);
             p5.translate(width / 2, height / 2); // Set the center of the screen as the origin.
             // Change the coordinate system in the direction of increasing the top right.
@@ -134,7 +134,11 @@ function createP5(parent, width, height) {
             p5.line(0, 0, nx, ny);
             p5.push();
             p5.translate(nx, ny);
-            p5.rotate(-p5.PI / 2 + p5.atan(angle));
+            if (nx >= 0) {
+                p5.rotate(-p5.PI / 2 + p5.atan(angle));
+            } else {
+                p5.rotate(p5.PI / 2 + p5.atan(angle));
+            }
             p5.triangle(0, r, -r, -r, r, -r);
             p5.pop();
         }
@@ -154,7 +158,7 @@ function createP5(parent, width, height) {
         //     const [nx, ny] = matmul(currMatrix, [x, y]);
         //     triangle(nx, ny + r, nx - r, ny - r, nx + r, ny - r);
         // }
-    };
+    }
 
     return new P5(sketch);
 }
