@@ -86,6 +86,7 @@ module.exports = {
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 
 
-        'no-multi-spaces': 'off'
+        'no-multi-spaces': 'off',
+        'object-curly-newline': ['error', { 'multiline': true, 'consistent': true }]
     }
 }
