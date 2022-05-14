@@ -5,6 +5,9 @@
                 <q-btn flat dense round icon="menu" aria-label="Menu" />
 
                 <q-toolbar-title>
+                    <q-avatar>
+                        <img src="./icons/favicon-128x128.png" />
+                    </q-avatar>
                     Linear-Transformation Visualization
                 </q-toolbar-title>
 
