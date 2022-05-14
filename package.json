@@ -1,6 +1,7 @@
 {
     "name": "linear-transformation",
     "version": "1.0.0",
+    "versionDate": "2022-05-15",
     "description": "Linear-Transformation Visualization",
     "productName": "Linear-Transformation",
     "author": "Deun Lee",

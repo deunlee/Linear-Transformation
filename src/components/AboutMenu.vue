@@ -31,7 +31,7 @@ import packageInfo from '../../package.json';
 export default defineComponent({
     setup() {
         return {
-            version: computed(() => packageInfo.version),
+            version: computed(() => `${packageInfo.version} (${packageInfo.versionDate})`),
         };
     },
 });
