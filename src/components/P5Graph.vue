@@ -1,5 +1,5 @@
 <template>
-    <div id="p5-container"></div>
+    <div id="p5-container" class="rounded-borders shadow-3"></div>
 </template>
 
 <script>
@@ -27,10 +27,13 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 #p5-container {
     width: 600px;
     height: 480px;
     background-color: black;
+}
+#p5-container > canvas { /* scoped 사용하지 말 것 */
+    border-radius: inherit;
 }
 </style>
