@@ -1,25 +1,37 @@
 <template>
     <q-page class="row items-center justify-evenly">
-        <image-card
-            v-for="(card, index) in cards"
-            :key="index"
-            v-bind="card"
-            @click="selectCard(index)"
-        ></image-card>
+        <div class="full-width row justify-center q-px-lg">
+            <ImageCard
+                v-for="(card, index) in cards"
+                :key="index"
+                v-bind="card"
+                @click="selectCard(index)"
+                class="q-ma-md col-sm-4 col-md-3"
+            ></ImageCard>
+        </div>
 
-        <p5-graph ref="graph"></p5-graph>
+        <P5Graph ref="graph"></P5Graph>
     </q-page>
 </template>
 
 <script lang="ts">
+import { defineComponent, reactive, ref, toRefs, onMounted, nextTick } from 'vue';
 import ImageCard from 'components/ImageCard.vue';
 import P5Graph from 'components/P5Graph.vue';
-import { defineComponent, reactive, ref, onMounted, nextTick } from 'vue';
+
+interface State {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    p5: any;
+}
 
 export default defineComponent({
     name: 'MainPage',
     components: { ImageCard, P5Graph },
     setup() {
+        const state = reactive<State>({
+            p5: {},
+        });
+
         const cards = reactive([
             {
                 title: 'Shearing',
@@ -31,8 +43,7 @@ export default defineComponent({
                 title: 'Rotation',
                 image: 'canvas.png',
                 selected: false,
-                matrix: [0, -1, 1, 0],
-                // [cos(pi/2), -sin(pi/2), sin(pi/2), cos(pi/2)]
+                matrix: [0, -1, 1, 0], // [cos(pi/2), -sin(pi/2), sin(pi/2), cos(pi/2)]
             },
             {
                 title: 'Permutation',
@@ -48,22 +59,24 @@ export default defineComponent({
                 // x-axis [1, 0, 0, 0]
             },
         ]);
-        const graph = ref(null);
 
         const selectCard = (index: number) => {
             cards.forEach((e) => (e.selected = false));
             cards[index].selected = true;
-            const a: any = graph.value;
-            a.state.p5.setMatrix(cards[index].matrix);
-            a.state.p5.start();
+            state.p5.setMatrix(cards[index].matrix);
+            state.p5.start();
         };
 
+        const graph = ref(null);
         onMounted(() => {
             nextTick(function () {
+                // 전체 화면이 렌더링된 이후에 실행된다.
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                state.p5 = (graph as any).value.state.p5;
                 selectCard(0);
             });
         });
-        return { cards, selectCard, graph };
+        return { cards, selectCard, graph, ...toRefs(state) };
     },
 });
 </script>
