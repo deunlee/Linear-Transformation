@@ -33,6 +33,7 @@ const sketch = function (p5) {
         yAxis = [0, -vBound, 0, vBound];
 
         s = p5.createSlider(0, 1, 0.25, 0.001);
+        setMatrix(...[-1, -2, -2, -4]);
     };
 
     let old_a = 0;
@@ -78,7 +79,7 @@ const sketch = function (p5) {
         // Draw unit vectors.
         p5.strokeWeight(3);
         strokeFill(255, 110, 80);
-        drawArrow(step, 0, 6); // red for x (i hat)
+        // drawArrow(step, 0, 6); // red for x (i hat)
         strokeFill(120, 190, 90);
         drawArrow(0, step, 6); // green for y (j hat)
 
@@ -115,10 +116,11 @@ const sketch = function (p5) {
         // for unit vector
         let [nx, ny] = matmul(currMatrix, [x, y]);
         let angle = ny / (nx + 0.0001);
+        console.log(angle)
         p5.line(0, 0, nx, ny);
         p5.push();
         p5.translate(nx, ny);
-        p5.rotate(-p5.PI / 2 + p5.atan(angle));
+        p5.rotate(p5.PI / 2 + p5.atan(angle));
         p5.triangle(0, r, -r, -r, r, -r);
         p5.pop();
     }
