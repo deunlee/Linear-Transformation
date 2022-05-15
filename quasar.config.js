@@ -218,5 +218,5 @@ module.exports = configure(function (ctx) {
                 // extendWebpackPreload also available besides this chainWebpackPreload
             }
         }
-    }
+    };
 });

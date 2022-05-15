@@ -70,7 +70,7 @@ module.exports = {
     rules: {
         'prefer-promise-reject-errors': 'off',
 
-        quotes: ['warn', 'single', { avoidEscape: true }],
+        quotes: ['error', 'single', { avoidEscape: true }],
 
         // this rule, if on, would require explicit return type on the `render` function
         '@typescript-eslint/explicit-function-return-type': 'off',
@@ -85,8 +85,9 @@ module.exports = {
         // allow debugger during development only
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 
-
+        indent: ['error', 4],
+        semi: ['error', 'always'],
         'no-multi-spaces': 'off',
         'object-curly-newline': ['error', { 'multiline': true, 'consistent': true }]
     }
-}
+};

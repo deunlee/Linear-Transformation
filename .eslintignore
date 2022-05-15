@@ -1,7 +1,9 @@
 /dist
+/dev
 /node_modules
 /src-bex/www
 /src-capacitor
 /src-cordova
 /src-ssr
 /.quasar
+/#-PRIVATE
