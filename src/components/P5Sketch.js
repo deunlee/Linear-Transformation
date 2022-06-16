@@ -26,16 +26,16 @@ function createP5(parent, width, height) {
         let speed          = 0.005;
         let isPlaying      = false;
 
-        p5.start     = function ()      { sliderValue = 0; isPlaying = true; }
-        p5.stop      = function ()      { isPlaying = false; }
-        p5.getSpeed  = function ()      { return speed;      }
-        p5.setSpeed  = function (value) { speed = value;     }
+        p5.start     = function ()      { sliderValue = 0; isPlaying = true; };
+        p5.stop      = function ()      { isPlaying = false; };
+        p5.getSpeed  = function ()      { return speed;      };
+        p5.setSpeed  = function (value) { speed = value;     };
         p5.setMatrix = function ([a, b, c, d]) {
             matrix[0][0] = a;
             matrix[0][1] = b;
             matrix[1][0] = c;
             matrix[1][1] = d;
-        }
+        };
 
         p5.setup = function () {
             const canvas = p5.createCanvas(width, height);
@@ -66,7 +66,7 @@ function createP5(parent, width, height) {
             }
 
             p5.drawOnce();
-        }
+        };
 
         p5.drawOnce = function () {
             p5.background(0);
@@ -153,11 +153,6 @@ function createP5(parent, width, height) {
         function transCircle(x, y, r) {
             p5.circle(...matmul(currMatrix, [x, y]), r);
         }
-
-        // function transTriangle(x, y, r) {
-        //     const [nx, ny] = matmul(currMatrix, [x, y]);
-        //     triangle(nx, ny + r, nx - r, ny - r, nx + r, ny - r);
-        // }
     }
 
     return new P5(sketch);
