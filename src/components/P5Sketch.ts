@@ -1,35 +1,45 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import P5 from 'p5';
 
-function createP5(parent, width, height) {
-    function sketch(p5) {
+type RectPos  = [number, number, number, number];
+type Matrix22 = [[number, number], [number, number]];
+
+interface P5Sketch extends P5 {
+    start()    : void;
+    stop()     : void;
+    getSpeed() : void;
+    setSpeed(value: number): void;
+    setMatrix([a, b, c, d]: RectPos): void;
+    drawOnce() : void;
+}
+
+function createP5(parent: HTMLElement, width: number, height: number) {
+    function sketch(p5: P5Sketch) {
         // const width  = 600;
         // const height = 480;
         const step   = p5.floor(height / 8); // number of pixels in one cell
-        const hLines = []; // horizontal lines [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]
-        const vLines = []; // vertical   lines
-        let xAxis    = []; // horizontal center line [x1,y1,x2,y2]
-        let yAxis    = []; // vertical   center line
+        const hLines : RectPos[] = []; // horizontal lines [[x1,y1,x2,y2], [x1,y1,x2,y2], ...]
+        const vLines : RectPos[] = []; // vertical   lines
+        let   xAxis  : RectPos   = [0, 0, 0, 0]; // horizontal center line [x1,y1,x2,y2]
+        let   yAxis  : RectPos   = [0, 0, 0, 0]; // vertical   center line
 
-        const matrix = [
+        const matrix: Matrix22 = [
             [2, 1],
             [1, 2],
         ]; // setMatrix()
-        const currMatrix = [
+        const currMatrix: Matrix22 = [
             [0, 0],
             [0, 0],
         ]; // It will be calculated automatically.
 
-        let slider         = null;
         let sliderValue    = 0;
-        let sliderValueOld = 0;
         let speed          = 0.005;
         let isPlaying      = false;
 
-        p5.start     = function ()      { sliderValue = 0; isPlaying = true; };
-        p5.stop      = function ()      { isPlaying = false; };
-        p5.getSpeed  = function ()      { return speed;      };
-        p5.setSpeed  = function (value) { speed = value;     };
+        p5.start     = function () { sliderValue = 0; isPlaying = true; };
+        p5.stop      = function () { isPlaying = false; };
+        p5.getSpeed  = function () { return speed;      };
+        p5.setSpeed  = function (value) { speed = value; };
         p5.setMatrix = function ([a, b, c, d]) {
             matrix[0][0] = a;
             matrix[0][1] = b;
@@ -40,7 +50,7 @@ function createP5(parent, width, height) {
         p5.setup = function () {
             const canvas = p5.createCanvas(width, height);
             canvas.parent(parent);
-            p5.frameRate(60);
+            // p5.frameRate(30);
 
             // Calculate coordinates of grid lines.
             const hBound = width  / 2 + step * 5; // horizontal bound
@@ -50,16 +60,11 @@ function createP5(parent, width, height) {
             xAxis = [-hBound, 0, hBound, 0];
             yAxis = [0, -vBound, 0, vBound];
 
-            // slider = p5.createSlider(0, 1, 0.25, 0.001);
         };
 
         p5.draw = function () {
-            // sliderValue = slider.value();
-            // if (sliderValue === sliderValueOld) return;
-            // sliderValueOld = sliderValue;
-
             if (!isPlaying) return;
-            sliderValue += speed; // p5.deltaTime / 2500;
+            sliderValue += p5.deltaTime / 2500; // speed
             if (sliderValue >= 1) {
                 sliderValue = 1;
                 p5.stop();
@@ -115,19 +120,19 @@ function createP5(parent, width, height) {
             transCircle(step, step, 12);
         };
 
-        function matmul(m1, m2) {
+        function matmul(m1: Matrix22, m2: [number, number]): [number, number] {
             return [
                 m1[0][0] * m2[0] + m1[0][1] * m2[1],
                 m1[1][0] * m2[0] + m1[1][1] * m2[1],
             ];
         }
 
-        function strokeFill(r, g, b) {
+        function strokeFill(r: number, g: number, b: number) {
             p5.stroke(r, g, b);
             p5.fill(r, g, b);
         }
 
-        function drawArrow(x, y, r) {
+        function drawArrow(x: number, y: number, r: number) {
             // for unit vector
             const [nx, ny] = matmul(currMatrix, [x, y]);
             const angle = ny / (nx + 0.0001);
@@ -146,12 +151,17 @@ function createP5(parent, width, height) {
         // Do NOT use applyMatrix() in p5.js.
         // Otherwise, thickness of line changes, and a circle becomes an ellipse.
 
-        function transLine(x1, y1, x2, y2) {
+        function transLine(x1: number, y1: number, x2: number, y2: number) {
             p5.line(...matmul(currMatrix, [x1, y1]), ...matmul(currMatrix, [x2, y2]));
         }
 
-        function transCircle(x, y, r) {
+        function transCircle(x: number, y: number, r: number) {
             p5.circle(...matmul(currMatrix, [x, y]), r);
+        }
+
+        function transTriangle(x: number, y: number, r: number) {
+            const [nx, ny] = matmul(currMatrix, [x, y]);
+            p5.triangle(nx, ny + r, nx - r, ny - r, nx + r, ny - r);
         }
     }
 

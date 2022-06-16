@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import createP5 from '../scripts/sketch.js';
+import createP5 from './P5Sketch';
 import { defineComponent, reactive, onMounted, onBeforeUnmount } from 'vue';
 
 export default defineComponent({
