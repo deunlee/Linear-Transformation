@@ -1,6 +1,6 @@
 <template>
     <q-card
-        class="img-card noselect"
+        class="img-card noselect shadow-2"
         :class="{ 'glowing-item': selected }"
         v-ripple:white
     >
@@ -44,7 +44,8 @@ export default defineComponent({
 
 <style scoped>
 .img-card {
-    min-width: 200px;
+    min-width: 100px;
+    max-width: 250px;
     cursor: pointer;
 }
 
